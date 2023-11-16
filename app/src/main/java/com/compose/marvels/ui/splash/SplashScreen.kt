@@ -1,15 +1,15 @@
-package com.compose.marvel.ui.splash
+package com.compose.marvels.ui.splash
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.SpringSpec
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -23,40 +23,45 @@ import com.compose.marvels.R
 import com.skydoves.orbital.Orbital
 import com.skydoves.orbital.animateTransformation
 import com.skydoves.orbital.rememberContentWithOrbitalScope
+import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen() {
+    var isTransformed by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(2000)
+        isTransformed = true
+        delay(1000)
+    }
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        example()
+        example(isTransformed)
     }
 }
 
 @Composable
-fun example() {
+fun example(isTransformed: Boolean) {
     val transformationSpec = SpringSpec<IntSize>(
         dampingRatio = Spring.DampingRatioMediumBouncy,
         stiffness = 200f
     )
 
-    var isTransformed by rememberSaveable { mutableStateOf(false) }
     val poster = rememberContentWithOrbitalScope {
         Image(
             modifier = if (isTransformed) {
-                Modifier.size(300.dp, 620.dp)
+                Modifier.size(150.dp, 310.dp)
             } else {
-                Modifier.size(100.dp, 220.dp)
+                Modifier.size(75.dp, 155.dp)
             }.animateTransformation(this, transformationSpec),
-            painter = painterResource(id = R.drawable.logo_marvel),
+            painter = painterResource(id = R.drawable.logo_transparent),
             contentDescription = ""
         )
     }
 
-    Orbital(
-        modifier = Modifier.clickable { isTransformed = !isTransformed }
-    ) {
+    Orbital {
         Column(
             Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
