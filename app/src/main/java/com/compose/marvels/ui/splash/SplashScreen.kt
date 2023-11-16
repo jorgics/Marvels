@@ -38,12 +38,12 @@ fun SplashScreen() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        example(isTransformed)
+        Example(isTransformed)
     }
 }
 
 @Composable
-fun example(isTransformed: Boolean) {
+fun Example(isTransformed: Boolean) {
     val transformationSpec = SpringSpec<IntSize>(
         dampingRatio = Spring.DampingRatioMediumBouncy,
         stiffness = 200f
