@@ -53,12 +53,31 @@ android {
     }
 }
 
+ext {
+   val BASE_URL = "https://gateway.marvel.com/"
+}
+
 dependencies {
     val composeUiVersion = "1.5.0"
     val daggerHiltVersion = "2.44"
+    val navigationVersion = "2.7.5"
+    val retrofitVersion = "2.9.0"
+    val pagingVersion = "3.2.1"
+
+    //Paging
+    implementation("androidx.paging:paging-runtime-ktx:$pagingVersion")
+    implementation("androidx.paging:paging-compose:$pagingVersion")
 
     //Orbital
     implementation("com.github.skydoves:orbital:0.3.2")
+
+    //Retrofit
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.3.1")
+
+    //Navigation
+    implementation("androidx.navigation:navigation-compose:$navigationVersion")
 
     //Dagger Hilt
     implementation ("com.google.dagger:hilt-android:$daggerHiltVersion")
