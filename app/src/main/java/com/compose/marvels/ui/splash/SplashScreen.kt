@@ -19,26 +19,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.compose.marvels.R
+import com.compose.marvels.ui.models.Routes
 import com.skydoves.orbital.Orbital
 import com.skydoves.orbital.animateTransformation
 import com.skydoves.orbital.rememberContentWithOrbitalScope
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen() {
+fun SplashScreen(navController: NavHostController) {
     var isTransformed by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         delay(2000)
         isTransformed = true
         delay(1000)
+        navController.navigate(Routes.Gallery.route)
     }
 
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Example(isTransformed)
+        Image(
+            painter = painterResource(id = R.drawable.logo_transparent),
+            contentDescription = ""
+        )
+        //Example(isTransformed)
     }
 }
 

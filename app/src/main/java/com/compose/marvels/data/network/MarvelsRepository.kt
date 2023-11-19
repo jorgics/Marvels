@@ -4,12 +4,13 @@ import android.util.Log
 import com.compose.marvels.domain.Repository
 import com.compose.marvels.domain.models.CharacterModel
 import com.compose.marvels.domain.models.ComicModel
+import com.compose.marvels.domain.models.GalleryModel
 import javax.inject.Inject
 
 class MarvelsRepository @Inject constructor(private val apiService: MarvelsService) : Repository {
-    override suspend fun getCharacters(limit: Int, offset: Int): List<CharacterModel>? {
+    override suspend fun getCharacters(limit: Int, offset: Int): GalleryModel? {
         runCatching { apiService.getCharacters(limit, offset) }
-            .onSuccess { return it.data?.characters?.map { character -> character.toDomain() } }
+            .onSuccess { return GalleryModel(it.data?.total, it.data?.characters?.map { character -> character.toDomain() }) }
             .onFailure { Log.e("Error", "${it.cause} ${it.message}") }
         return null
     }
