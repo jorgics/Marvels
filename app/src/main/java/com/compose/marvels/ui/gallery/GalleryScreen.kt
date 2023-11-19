@@ -39,6 +39,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.compose.marvels.domain.models.CharacterModel
 import com.compose.marvels.ui.MainViewModel
 import com.compose.marvels.ui.models.Routes
+import com.compose.marvels.ui.theme.BlackGradiant
 import com.compose.marvels.ui.theme.BodyText
 import com.compose.marvels.ui.theme.Red500
 import com.compose.marvels.ui.theme.RedGradiant
@@ -68,7 +69,7 @@ fun GalleryScreen(navController: NavHostController, mainViewModel: MainViewModel
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.White),
+                    .background(BlackGradiant),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top
             ) {
@@ -116,7 +117,8 @@ fun Filter(filterText: String, onValueChange: (String) -> Unit) {
         },
         colors = TextFieldDefaults.outlinedTextFieldColors(
             unfocusedBorderColor = Red500,
-            focusedBorderColor = Red500
+            focusedBorderColor = Red500,
+            textColor = Color.White
         )
     )
 }

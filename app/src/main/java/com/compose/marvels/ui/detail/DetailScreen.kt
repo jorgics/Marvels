@@ -37,6 +37,7 @@ import com.compose.marvels.domain.models.CharacterModel
 import com.compose.marvels.domain.models.ComicModel
 import com.compose.marvels.ui.MainViewModel
 import com.compose.marvels.ui.models.Routes
+import com.compose.marvels.ui.theme.BlackGradiant
 import com.compose.marvels.ui.theme.BodyText
 import com.compose.marvels.ui.theme.BodyTextSmall
 import com.compose.marvels.ui.theme.Red500
@@ -57,13 +58,12 @@ fun DetailScreen(navController: NavHostController, mainViewModel: MainViewModel)
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize().background(BlackGradiant)) {
             if (isLoading) {
                 LoadingProgress()
             } else {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     CharacterItem(character)
                     Comics(comics)
