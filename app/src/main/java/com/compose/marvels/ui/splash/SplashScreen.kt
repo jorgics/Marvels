@@ -1,80 +1,43 @@
 package com.compose.marvels.ui.splash
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.SpringSpec
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.compose.marvels.R
+import com.compose.marvels.ui.MainViewModel
 import com.compose.marvels.ui.models.Routes
-import com.skydoves.orbital.Orbital
-import com.skydoves.orbital.animateTransformation
-import com.skydoves.orbital.rememberContentWithOrbitalScope
+import com.compose.marvels.ui.theme.BlackGradiant
+import com.compose.marvels.ui.theme.WhiteGradiant
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navController: NavHostController) {
-    var isTransformed by rememberSaveable { mutableStateOf(false) }
+fun SplashScreen(navController: NavHostController, mainViewModel: MainViewModel) {
+    val mode by mainViewModel.mode.collectAsState()
+
     LaunchedEffect(Unit) {
         delay(2000)
-        isTransformed = true
         delay(1000)
-        navController.navigate(Routes.Gallery.route)
+        navController.navigate(Routes.Home.route)
     }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(if (mode) BlackGradiant else WhiteGradiant),
         contentAlignment = Alignment.Center
     ) {
         Image(
             painter = painterResource(id = R.drawable.logo_transparent),
             contentDescription = ""
         )
-        //Example(isTransformed)
-    }
-}
-
-@Composable
-fun Example(isTransformed: Boolean) {
-    val transformationSpec = SpringSpec<IntSize>(
-        dampingRatio = Spring.DampingRatioMediumBouncy,
-        stiffness = 200f
-    )
-
-    val poster = rememberContentWithOrbitalScope {
-        Image(
-            modifier = if (isTransformed) {
-                Modifier.size(150.dp, 310.dp)
-            } else {
-                Modifier.size(75.dp, 155.dp)
-            }.animateTransformation(this, transformationSpec),
-            painter = painterResource(id = R.drawable.logo_transparent),
-            contentDescription = ""
-        )
-    }
-
-    Orbital {
-        Column(
-            Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            poster()
-        }
     }
 }

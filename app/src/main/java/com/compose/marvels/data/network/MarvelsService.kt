@@ -13,6 +13,13 @@ interface MarvelsService {
         @Query("offset") offset: Int
     ): CharacterDataWrapper
 
+    @GET("v1/public/characters")
+    suspend fun getCharactersByNameStartsWith(
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int,
+        @Query("nameStartsWith") nameStartsWith: String = ""
+    ): CharacterDataWrapper
+
     @GET("v1/public/characters/{characterId}")
     suspend fun getDetailCharacterById(
         @Path("characterId") characterId: Int

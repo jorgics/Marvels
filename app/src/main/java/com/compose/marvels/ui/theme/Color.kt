@@ -19,6 +19,10 @@ val Red700 = Color(0xFFD60000)
 val Black600 = Color(0xFF5d5d5d)
 val Black800 = Color(0xFF454545)
 
+val WhiteGradiant = Brush.linearGradient(
+    colors = listOf(Color.White, Color.White)
+)
+
 val RedGradiant = Brush.linearGradient(
     colors = listOf(Red700, Red500, Color.Black)
 )

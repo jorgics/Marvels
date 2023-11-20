@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.compose.marvels.ui.detail.DetailScreen
 import com.compose.marvels.ui.gallery.GalleryScreen
+import com.compose.marvels.ui.home.HomeScreen
 import com.compose.marvels.ui.models.Routes
 import com.compose.marvels.ui.splash.SplashScreen
 import com.compose.marvels.ui.theme.MarvelsTheme
@@ -40,7 +41,8 @@ class MainActivity : ComponentActivity() {
                     if (isError) Toast.makeText(applicationContext, "Error", Toast.LENGTH_LONG).show()
 
                     NavHost(navController = navController, startDestination = Routes.Splash.route) {
-                        composable(Routes.Splash.route) { SplashScreen(navController) }
+                        composable(Routes.Splash.route) { SplashScreen(navController, mainViewModel) }
+                        composable(Routes.Home.route) { HomeScreen(navController, mainViewModel) }
                         composable(Routes.Gallery.route) { GalleryScreen(navController, mainViewModel) }
                         composable(Routes.Detail.route) { DetailScreen(navController, mainViewModel) }
                     }

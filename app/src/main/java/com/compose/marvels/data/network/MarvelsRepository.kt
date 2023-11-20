@@ -1,6 +1,7 @@
 package com.compose.marvels.data.network
 
 import android.util.Log
+import com.compose.marvels.data.network.dtos.ParamsDto
 import com.compose.marvels.domain.Repository
 import com.compose.marvels.domain.models.CharacterModel
 import com.compose.marvels.domain.models.ComicModel
@@ -8,8 +9,15 @@ import com.compose.marvels.domain.models.GalleryModel
 import javax.inject.Inject
 
 class MarvelsRepository @Inject constructor(private val apiService: MarvelsService) : Repository {
-    override suspend fun getCharacters(limit: Int, offset: Int): GalleryModel? {
-        runCatching { apiService.getCharacters(limit, offset) }
+    override suspend fun getCharacters(paramsDto: ParamsDto): GalleryModel? {
+        runCatching { apiService.getCharacters(paramsDto.limit, paramsDto.offset) }
+            .onSuccess { return GalleryModel(it.data?.total, it.data?.characters?.map { character -> character.toDomain() }) }
+            .onFailure { Log.e("Error", "${it.cause} ${it.message}") }
+        return null
+    }
+
+    override suspend fun getCharactersByNameStartsWith(paramsDto: ParamsDto): GalleryModel? {
+        runCatching { apiService.getCharactersByNameStartsWith(paramsDto.limit, paramsDto.offset, paramsDto.nameStartsWith) }
             .onSuccess { return GalleryModel(it.data?.total, it.data?.characters?.map { character -> character.toDomain() }) }
             .onFailure { Log.e("Error", "${it.cause} ${it.message}") }
         return null

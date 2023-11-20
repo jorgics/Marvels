@@ -5,6 +5,6 @@ import com.compose.marvels.domain.Repository
 import com.compose.marvels.domain.models.GalleryModel
 import javax.inject.Inject
 
-class GetCharactersUseCase @Inject constructor(private val repository: Repository) {
-    suspend operator fun invoke(paramsDto: ParamsDto) = repository.getCharacters(paramsDto) ?: GalleryModel()
+class GetCharactersByNameStartsWithUseCase @Inject constructor(private val repository: Repository) {
+    suspend operator fun invoke(paramsDto: ParamsDto) = repository.getCharactersByNameStartsWith(paramsDto) ?: GalleryModel()
 }

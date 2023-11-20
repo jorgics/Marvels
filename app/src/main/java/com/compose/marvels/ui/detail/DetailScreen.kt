@@ -5,24 +5,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -40,25 +37,47 @@ import com.compose.marvels.ui.models.Routes
 import com.compose.marvels.ui.theme.BlackGradiant
 import com.compose.marvels.ui.theme.BodyText
 import com.compose.marvels.ui.theme.BodyTextSmall
-import com.compose.marvels.ui.theme.Red500
 import com.compose.marvels.ui.theme.RedGradiant
 import com.compose.marvels.ui.theme.TitleText
 import com.compose.marvels.ui.theme.TitleTextSmall
+import com.compose.marvels.ui.theme.WhiteGradiant
 import com.compose.marvels.ui.utils.ImageDefault
 import com.compose.marvels.ui.utils.LoadImage
 import com.compose.marvels.ui.utils.LoadingProgress
+import com.compose.marvels.ui.utils.MyTopBar
 import java.text.SimpleDateFormat
+import java.util.Date
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(navController: NavHostController, mainViewModel: MainViewModel) {
+    val mode by mainViewModel.mode.collectAsState()
     val character by mainViewModel.character.collectAsState()
     val isLoading by mainViewModel.isLoading.collectAsState()
     val comics by mainViewModel.comics.collectAsState()
 
-    Surface(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Box(modifier = Modifier.fillMaxSize().background(BlackGradiant)) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            MyTopBar(
+                title = "",
+                navigationIcon = {
+                    Icon(
+                        modifier = Modifier.clickable { navController.navigate(Routes.Gallery.route) },
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = "",
+                        tint = Color.White
+                    )
+                }
+            )
+        }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .background(if (mode) BlackGradiant else WhiteGradiant)
+        ) {
             if (isLoading) {
                 LoadingProgress()
             } else {
@@ -66,7 +85,7 @@ fun DetailScreen(navController: NavHostController, mainViewModel: MainViewModel)
                     modifier = Modifier.fillMaxSize()
                 ) {
                     CharacterItem(character)
-                    Comics(comics)
+                    Comics(comics, mode)
                 }
                 Icon(
                     modifier = Modifier
@@ -75,7 +94,7 @@ fun DetailScreen(navController: NavHostController, mainViewModel: MainViewModel)
                         .clickable { navController.navigate(Routes.Gallery.route) },
                     imageVector = Icons.Filled.Close,
                     contentDescription = "",
-                    tint = Red500
+                    tint = Color.White
                 )
             }
         }
@@ -131,15 +150,24 @@ fun CharacterItem(character: CharacterModel?) {
 }
 
 @Composable
-fun Comics(comics: List<ComicModel>) {
-    LazyHorizontalGrid(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 12.dp, end = 12.dp),
-        rows = GridCells.Adaptive(250.dp)
-    ) {
-        items(comics) {
-            ComicItem(it)
+fun Comics(comics: List<ComicModel>, mode: Boolean) {
+    if (comics.isEmpty()) {
+        Text(
+            modifier = Modifier.fillMaxSize(),
+            text = "No hay comics",
+            color = if (mode) Color.White else Color.Black,
+            textAlign = TextAlign.Center
+        )
+    } else {
+        LazyHorizontalGrid(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 12.dp, end = 12.dp),
+            rows = GridCells.Adaptive(200.dp)
+        ) {
+            items(comics) {
+                ComicItem(it)
+            }
         }
     }
 }
@@ -148,6 +176,9 @@ fun Comics(comics: List<ComicModel>) {
 @Composable
 fun ComicItem(comicModel: ComicModel) {
     val format = SimpleDateFormat("dd/MM/yyyy")
+    var title = comicModel.title ?: ""
+    if (title.isNotEmpty() && title.length >= 50)
+        title = title.replaceRange(49, title.length, "...")
 
     OutlinedCard(
         modifier = Modifier
@@ -174,15 +205,19 @@ fun ComicItem(comicModel: ComicModel) {
             }
 
             Text(
-                modifier = Modifier.fillMaxWidth().padding(4.dp),
-                text = comicModel.title!!,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp),
+                text = title,
                 textAlign = TextAlign.Center,
                 color = Color.White,
                 style = TitleTextSmall
             )
             Text(
-                modifier = Modifier.fillMaxWidth().padding(8.dp),
-                text = "Modificado: ${format.format(comicModel.date!!)}",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                text = "Modificado: ${format.format(comicModel.date ?: Date())}",
                 textAlign = TextAlign.Start,
                 color = Color.White,
                 style = BodyTextSmall

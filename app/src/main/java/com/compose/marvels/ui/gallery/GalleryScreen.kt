@@ -1,6 +1,5 @@
 package com.compose.marvels.ui.gallery
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,16 +14,13 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,48 +31,68 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.paging.compose.collectAsLazyPagingItems
 import com.compose.marvels.domain.models.CharacterModel
 import com.compose.marvels.ui.MainViewModel
 import com.compose.marvels.ui.models.Routes
 import com.compose.marvels.ui.theme.BlackGradiant
 import com.compose.marvels.ui.theme.BodyText
-import com.compose.marvels.ui.theme.Red500
 import com.compose.marvels.ui.theme.RedGradiant
 import com.compose.marvels.ui.theme.TitleText
+import com.compose.marvels.ui.theme.WhiteGradiant
+import com.compose.marvels.ui.utils.Filter
 import com.compose.marvels.ui.utils.ImageDefault
 import com.compose.marvels.ui.utils.LoadImage
 import com.compose.marvels.ui.utils.LoadingProgress
+import com.compose.marvels.ui.utils.MyTopBar
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GalleryScreen(navController: NavHostController, mainViewModel: MainViewModel) {
-    LaunchedEffect(Unit) {
-        mainViewModel.getCharacters()
-    }
-    val characters by mainViewModel.filterList.collectAsState()
+
+    val mode by mainViewModel.mode.collectAsState()
+    val characters by mainViewModel.charactersList.collectAsState()
     val isLoading by mainViewModel.isLoading.collectAsState()
-    val total by mainViewModel.total.collectAsState()
     val filterText by mainViewModel.filterText.collectAsState()
     val lazyGridState = rememberLazyGridState()
-    val lazyPaging = mainViewModel.lazyPagingItems.collectAsLazyPagingItems()
-    val pagerState = rememberPagerState(pageCount = { total / 20 })
 
-    Surface(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        //HorizontalPager(state = pagerState) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(BlackGradiant),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top
-            ) {
-                if (isLoading) {
-                    LoadingProgress()
+    LaunchedEffect(Unit) {
+        if (mainViewModel.getPage() == -1) mainViewModel.getCharacters(mainViewModel.getPage())
+    }
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            MyTopBar(
+                navigationIcon = {
+                    Icon(
+                        modifier = Modifier.clickable { navController.navigate(Routes.Home.route) },
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = "",
+                        tint = Color.White
+                    )
+                }
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .background(if (mode) BlackGradiant else WhiteGradiant),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            if (isLoading) {
+                LoadingProgress()
+            } else {
+                Filter(
+                    filterText = filterText,
+                    color = if (mode) Color.White else Color.Black,
+                    onValueChange = { mainViewModel.onValueChange(it) }
+                ) { mainViewModel.onIconClick() }
+                if (characters.isEmpty()) {
+                    Text(text = "No hay resultados")
                 } else {
-                    Filter(filterText){ mainViewModel.onValueChange(it) }
                     LazyVerticalGrid(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -94,33 +110,13 @@ fun GalleryScreen(navController: NavHostController, mainViewModel: MainViewModel
 
                     if (lazyGridState.isScrollInProgress) {
                         if (mainViewModel.isReachedEnd(lazyGridState)) {
-
+                            if (filterText.isEmpty()) mainViewModel.getCharacters(mainViewModel.getPage())
                         }
                     }
                 }
             }
-      //  }
+        }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun Filter(filterText: String, onValueChange: (String) -> Unit) {
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        value = filterText,
-        onValueChange = { onValueChange(it) },
-        trailingIcon = {
-            Icon(imageVector = Icons.Filled.Search, contentDescription = "", tint = Red500)
-        },
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            unfocusedBorderColor = Red500,
-            focusedBorderColor = Red500,
-            textColor = Color.White
-        )
-    )
 }
 
 @Composable
