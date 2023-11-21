@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -85,6 +83,9 @@ dependencies {
 
     //Icons
     implementation("androidx.compose.material:material-icons-extended")
+
+    //Mock
+    testImplementation("io.mockk:mockk:1.12.2")
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
