@@ -29,9 +29,9 @@ class MainViewModel @Inject constructor(
 
     companion object{
         private const val LIMIT = 20
+        private var _charactersTotal: List<CharacterModel> = emptyList()
+        private var _page = -1
     }
-
-    private val _characters = MutableStateFlow<List<CharacterModel>>(emptyList())
 
     private val _charactersList = MutableStateFlow<List<CharacterModel>>(emptyList())
     val charactersList: StateFlow<List<CharacterModel>> = _charactersList
@@ -56,9 +56,7 @@ class MainViewModel @Inject constructor(
     private val _mode = MutableStateFlow(false)
     val mode: StateFlow<Boolean> = _mode
 
-    private val _page = MutableStateFlow(-1)
-
-    fun getPage() = _page.value++
+    fun getPage() = _page++
 
     fun onModeChange() {
         _mode.value = !_mode.value
@@ -66,15 +64,15 @@ class MainViewModel @Inject constructor(
 
     fun onValueChange(filterText: String) {
         viewModelScope.launch {
-            _filterText.update { filterText }
+            _filterText.value = filterText
             if (filterText.isNotEmpty()) filterList()
-            else _charactersList.value = _characters.value.sortedBy { it.name }
+            else _charactersList.value = _charactersTotal.sortedBy { it.name }
         }
     }
 
     private fun filterList() {
         viewModelScope.launch {
-            _charactersList.value = _characters.value.filter {
+            _charactersList.value = _charactersTotal.filter {
                 it.name!!.lowercase().contains(_filterText.value.lowercase())
             }
         }
@@ -93,11 +91,18 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getCharacters(page: Int) {
+    fun onCleanClick() {
+        viewModelScope.launch {
+            _filterText.value = ""
+            _charactersList.value = _charactersTotal.sortedBy { it.name }
+        }
+    }
+
+    fun getCharacters() {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
-                val galleryModel = getCharactersUseCase.invoke(ParamsDto(offset = page * LIMIT))
+                val galleryModel = getCharactersUseCase.invoke(ParamsDto())
                 _total.value = galleryModel.total ?: 0
                 setCharacters(galleryModel)
                 _isLoading.value = false
@@ -108,10 +113,27 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun nextCharacters(page: Int) {
+        viewModelScope.launch {
+            try {
+                val galleryModel = getCharactersUseCase.invoke(ParamsDto(offset = page * LIMIT))
+                _total.value = galleryModel.total ?: 0
+                setCharacters(galleryModel)
+            } catch (e: Exception) {
+                error()
+            }
+
+        }
+    }
+
     private fun setCharacters(galleryModel: GalleryModel) {
-        _characters.value = galleryModel.characters ?: emptyList()
-        _charactersList.value = (_charactersList.value + _characters.value).distinct().sortedBy { it.name }
-        _characters.value = _charactersList.value
+        val list = galleryModel.characters ?: emptyList()
+        _charactersList.value = (_charactersList.value + list).distinct().sortedBy { it.name }
+        setCharactersTotal(_charactersList.value)
+    }
+
+    private fun setCharactersTotal(list: List<CharacterModel>) {
+        _charactersTotal = (_charactersTotal + list).distinct().sortedBy { it.name }
     }
 
     private fun getDetailById(characterId: Int) {
@@ -154,7 +176,7 @@ class MainViewModel @Inject constructor(
     fun onItemClick(characterModel: CharacterModel) {
         getAllDetails(characterModel.characterID!!)
         _filterText.value = ""
-        _charactersList.value = _characters.value.sortedBy { it.name }
+        _charactersList.value = _charactersTotal.sortedBy { it.name }
     }
 
     fun isReachedEnd(lazyGridState: LazyGridState): Boolean =

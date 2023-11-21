@@ -13,8 +13,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Cancel
+import androidx.compose.material.icons.outlined.Clear
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -124,25 +129,46 @@ fun ImageDefault() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Filter(filterText: String, color: Color, onValueChange: (String) -> Unit, onIconClick: () -> Unit) {
+fun Filter(
+    filterText: String,
+    color: Color,
+    onValueChange: (String) -> Unit,
+    onIconClick: () -> Unit,
+    onCleanClick: () -> Unit = {}
+) {
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
         value = filterText,
         onValueChange = { onValueChange(it) },
-        trailingIcon = {
+        placeholder = { Text(text = "Buscador") },
+        leadingIcon = {
             Icon(
-                modifier = Modifier.clickable { if (filterText.isNotEmpty()) onIconClick() },
-                imageVector = Icons.Filled.Search,
-                contentDescription = "",
-                tint = Red500
+                modifier = Modifier
+                    .clickable { if (filterText.isNotEmpty()) onIconClick() },
+                imageVector = Icons.Outlined.Search,
+                contentDescription = ""
             )
+        },
+        trailingIcon = {
+            if (filterText.isNotEmpty()) {
+                Icon(
+                    modifier = Modifier.clickable { onCleanClick() },
+                    imageVector = Icons.Outlined.Cancel,
+                    contentDescription = ""
+                )
+            }
         },
         colors = TextFieldDefaults.outlinedTextFieldColors(
             unfocusedBorderColor = Red500,
             focusedBorderColor = Red700,
-            textColor = color
+            textColor = color,
+            unfocusedTrailingIconColor = Red500,
+            focusedTrailingIconColor = Red700,
+            unfocusedLeadingIconColor = Red500,
+            focusedLeadingIconColor = Red700,
+            placeholderColor = color
         )
     )
 }

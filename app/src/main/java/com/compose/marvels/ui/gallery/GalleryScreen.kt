@@ -56,7 +56,7 @@ fun GalleryScreen(navController: NavHostController, mainViewModel: MainViewModel
     val lazyGridState = rememberLazyGridState()
 
     LaunchedEffect(Unit) {
-        if (mainViewModel.getPage() == -1) mainViewModel.getCharacters(mainViewModel.getPage())
+        if (mainViewModel.getPage() == -1) mainViewModel.getCharacters()
     }
 
     Scaffold(
@@ -88,8 +88,10 @@ fun GalleryScreen(navController: NavHostController, mainViewModel: MainViewModel
                 Filter(
                     filterText = filterText,
                     color = if (mode) Color.White else Color.Black,
-                    onValueChange = { mainViewModel.onValueChange(it) }
-                ) { mainViewModel.onIconClick() }
+                    onValueChange = { mainViewModel.onValueChange(it) },
+                    onIconClick = { mainViewModel.onIconClick() },
+                    onCleanClick = { mainViewModel.onCleanClick() }
+                )
                 if (characters.isEmpty()) {
                     Text(text = "No hay resultados")
                 } else {
@@ -110,7 +112,7 @@ fun GalleryScreen(navController: NavHostController, mainViewModel: MainViewModel
 
                     if (lazyGridState.isScrollInProgress) {
                         if (mainViewModel.isReachedEnd(lazyGridState)) {
-                            if (filterText.isEmpty()) mainViewModel.getCharacters(mainViewModel.getPage())
+                            if (filterText.isEmpty()) mainViewModel.nextCharacters(mainViewModel.getPage())
                         }
                     }
                 }
