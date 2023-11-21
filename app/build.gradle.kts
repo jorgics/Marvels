@@ -56,15 +56,10 @@ dependencies {
     val daggerHiltVersion = "2.44"
     val navigationVersion = "2.7.5"
     val retrofitVersion = "2.9.0"
-    val pagingVersion = "3.2.1"
     val coilVersion = "2.5.0"
 
     //Coil
     implementation("io.coil-kt:coil-compose:$coilVersion")
-
-    //Paging
-    implementation("androidx.paging:paging-runtime-ktx:$pagingVersion")
-    implementation("androidx.paging:paging-compose:$pagingVersion")
 
     //Orbital
     implementation("com.github.skydoves:orbital:0.3.2")
