@@ -4,7 +4,6 @@ This application is used to search for marvel characters and see a brief descrip
 
 ## Technologies
 
-<br />
 - Architecture MVVM 
 - Clean code
 - Navigation Component
@@ -19,7 +18,7 @@ This application is used to search for marvel characters and see a brief descrip
 
 ---
 
-### Views
+## Views
 
 |                             Splash                             |                             Home                             |
 |:--------------------------------------------------------------:|:------------------------------------------------------------:|
