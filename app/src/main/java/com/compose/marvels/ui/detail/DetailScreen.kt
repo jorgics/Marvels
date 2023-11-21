@@ -37,6 +37,7 @@ import com.compose.marvels.ui.models.Routes
 import com.compose.marvels.ui.theme.BlackGradiant
 import com.compose.marvels.ui.theme.BodyText
 import com.compose.marvels.ui.theme.BodyTextSmall
+import com.compose.marvels.ui.theme.Red700
 import com.compose.marvels.ui.theme.RedGradiant
 import com.compose.marvels.ui.theme.TitleText
 import com.compose.marvels.ui.theme.TitleTextSmall
@@ -94,7 +95,7 @@ fun DetailScreen(navController: NavHostController, mainViewModel: MainViewModel)
                         .clickable { navController.navigate(Routes.Gallery.route) },
                     imageVector = Icons.Filled.Close,
                     contentDescription = "",
-                    tint = Color.White
+                    tint = Red700
                 )
             }
         }

@@ -8,7 +8,7 @@ import com.compose.marvels.domain.models.GalleryModel
 interface Repository {
     suspend fun getCharacters(paramsDto: ParamsDto): GalleryModel?
 
-    suspend fun getCharactersByNameStartsWith(paramsDto: ParamsDto): GalleryModel?
+    suspend fun getCharactersByNameStartsWith(paramsDto: ParamsDto): List<CharacterModel>?
     suspend fun getDetailCharacterById(characterID: Int): CharacterModel?
     suspend fun getComicsCharacterById(characterID: Int): List<ComicModel>?
 }

@@ -82,8 +82,8 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _isLoading.value = true
-                val galleryModel = getCharactersByNameStartsWith.invoke(ParamsDto(nameStartsWith = _filterText.value))
-                setCharacters(galleryModel)
+                val list = getCharactersByNameStartsWith.invoke(ParamsDto(nameStartsWith = _filterText.value)) ?: emptyList()
+                setCharacters(list)
                 _isLoading.value = false
             } catch (e: Exception) {
                 error()
@@ -104,7 +104,7 @@ class MainViewModel @Inject constructor(
                 _isLoading.value = true
                 val galleryModel = getCharactersUseCase.invoke(ParamsDto())
                 _total.value = galleryModel.total ?: 0
-                setCharacters(galleryModel)
+                setCharacters(galleryModel.characters)
                 _isLoading.value = false
             } catch (e: Exception) {
                 error()
@@ -117,8 +117,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val galleryModel = getCharactersUseCase.invoke(ParamsDto(offset = page * LIMIT))
-                _total.value = galleryModel.total ?: 0
-                setCharacters(galleryModel)
+                setCharacters(galleryModel.characters)
             } catch (e: Exception) {
                 error()
             }
@@ -126,8 +125,8 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun setCharacters(galleryModel: GalleryModel) {
-        val list = galleryModel.characters ?: emptyList()
+    private fun setCharacters(characters: List<CharacterModel>?) {
+        val list = characters ?: emptyList()
         _charactersList.value = (_charactersList.value + list).distinct().sortedBy { it.name }
         setCharactersTotal(_charactersList.value)
     }

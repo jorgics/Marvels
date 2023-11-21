@@ -16,9 +16,9 @@ class MarvelsRepository @Inject constructor(private val apiService: MarvelsServi
         return null
     }
 
-    override suspend fun getCharactersByNameStartsWith(paramsDto: ParamsDto): GalleryModel? {
+    override suspend fun getCharactersByNameStartsWith(paramsDto: ParamsDto): List<CharacterModel>? {
         runCatching { apiService.getCharactersByNameStartsWith(paramsDto.limit, paramsDto.offset, paramsDto.nameStartsWith) }
-            .onSuccess { return GalleryModel(it.data?.total, it.data?.characters?.map { character -> character.toDomain() }) }
+            .onSuccess { return it.data?.characters?.map { character -> character.toDomain() } }
             .onFailure { Log.e("Error", "${it.cause} ${it.message}") }
         return null
     }
