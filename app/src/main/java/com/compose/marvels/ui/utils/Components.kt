@@ -1,12 +1,8 @@
 package com.compose.marvels.ui.utils
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.SpringSpec
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -32,7 +28,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
@@ -42,9 +37,6 @@ import com.compose.marvels.ui.theme.BodyText
 import com.compose.marvels.ui.theme.Red500
 import com.compose.marvels.ui.theme.Red700
 import com.compose.marvels.ui.theme.TitleTextSmall
-import com.skydoves.orbital.Orbital
-import com.skydoves.orbital.animateTransformation
-import com.skydoves.orbital.rememberContentWithOrbitalScope
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
