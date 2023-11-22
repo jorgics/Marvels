@@ -27,24 +27,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.compose.marvels.R
 import com.compose.marvels.domain.models.CharacterModel
 import com.compose.marvels.domain.models.ComicModel
 import com.compose.marvels.ui.MainViewModel
-import com.compose.marvels.ui.models.Routes
-import com.compose.marvels.ui.theme.BlackGradiant
 import com.compose.marvels.ui.theme.BodyText
 import com.compose.marvels.ui.theme.BodyTextSmall
 import com.compose.marvels.ui.theme.Red700
 import com.compose.marvels.ui.theme.RedGradiant
 import com.compose.marvels.ui.theme.TitleText
 import com.compose.marvels.ui.theme.TitleTextSmall
-import com.compose.marvels.ui.theme.WhiteGradiant
 import com.compose.marvels.ui.utils.ImageDefault
 import com.compose.marvels.ui.utils.LoadImage
 import com.compose.marvels.ui.utils.LoadingProgress
+import com.compose.marvels.ui.utils.MessageError
+import com.compose.marvels.ui.utils.MyLogo
+import com.compose.marvels.ui.utils.MyTitle
 import com.compose.marvels.ui.utils.MyTopBar
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -56,20 +58,25 @@ fun DetailScreen(navController: NavHostController, mainViewModel: MainViewModel)
     val character by mainViewModel.character.collectAsState()
     val isLoading by mainViewModel.isLoading.collectAsState()
     val comics by mainViewModel.comics.collectAsState()
+    val expanded by mainViewModel.expanded.collectAsState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             MyTopBar(
-                title = "",
+                title = { MyTitle(title = stringResource(id = R.string.detail_screen)) },
                 navigationIcon = {
                     Icon(
-                        modifier = Modifier.clickable { navController.navigate(Routes.Gallery.route) },
+                        modifier = Modifier.clickable {
+                            mainViewModel.onAnimateChange()
+                            navController.popBackStack()
+                        },
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = "",
                         tint = Color.White
                     )
-                }
+                },
+                actions = { MyLogo() }
             )
         }
     ) { innerPadding ->
@@ -77,7 +84,7 @@ fun DetailScreen(navController: NavHostController, mainViewModel: MainViewModel)
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .background(if (mode) BlackGradiant else WhiteGradiant)
+                .background(if (mode) Color.Black else Color.White)
         ) {
             if (isLoading) {
                 LoadingProgress()
@@ -85,14 +92,21 @@ fun DetailScreen(navController: NavHostController, mainViewModel: MainViewModel)
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    CharacterItem(character)
-                    Comics(comics, mode)
+                    if (character != null) {
+                        CharacterItem(character!!, expanded) { mainViewModel.onExpanded() }
+                        Comics(comics, mode)
+                    } else {
+                        MessageError(message = stringResource(id = R.string.characters_error), mode = mode)
+                    }
                 }
                 Icon(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(top = 20.dp, end = 20.dp)
-                        .clickable { navController.navigate(Routes.Gallery.route) },
+                        .clickable {
+                            mainViewModel.onAnimateChange()
+                            navController.popBackStack()
+                        },
                     imageVector = Icons.Filled.Close,
                     contentDescription = "",
                     tint = Red700
@@ -103,9 +117,14 @@ fun DetailScreen(navController: NavHostController, mainViewModel: MainViewModel)
 }
 
 @Composable
-fun CharacterItem(character: CharacterModel?) {
+fun CharacterItem(
+    character: CharacterModel,
+    expanded: Boolean,
+    onExpanded: () -> Unit = {}
+) {
     OutlinedCard(
         modifier = Modifier
+            .clickable { onExpanded() }
             .fillMaxWidth()
             .padding(16.dp)
     ) {
@@ -120,7 +139,7 @@ fun CharacterItem(character: CharacterModel?) {
                     .fillMaxWidth()
                     .fillMaxHeight(0.2f)
             ) {
-                if (character?.image!!.path != null) {
+                if (character.image!!.path != null) {
                     val url = "${character.image.path}.${character.image.extension}"
                     LoadImage(modifier = Modifier.fillMaxSize(), url = url)
                 } else {
@@ -132,7 +151,7 @@ fun CharacterItem(character: CharacterModel?) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(4.dp),
-                text = character?.name!!,
+                text = character.name!!,
                 textAlign = TextAlign.Center,
                 color = Color.White,
                 style = TitleText
@@ -144,7 +163,8 @@ fun CharacterItem(character: CharacterModel?) {
                 text = character.description!!,
                 textAlign = TextAlign.Justify,
                 color = Color.White,
-                style = BodyText
+                style = BodyText,
+                maxLines = if (expanded) Int.MAX_VALUE else 1
             )
         }
     }
@@ -153,12 +173,7 @@ fun CharacterItem(character: CharacterModel?) {
 @Composable
 fun Comics(comics: List<ComicModel>, mode: Boolean) {
     if (comics.isEmpty()) {
-        Text(
-            modifier = Modifier.fillMaxSize(),
-            text = "No hay comics",
-            color = if (mode) Color.White else Color.Black,
-            textAlign = TextAlign.Center
-        )
+        MessageError(message = stringResource(id = R.string.comics_error), mode = mode)
     } else {
         LazyHorizontalGrid(
             modifier = Modifier

@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.compose.marvels.data.network.dtos.ParamsDto
 import com.compose.marvels.domain.models.CharacterModel
 import com.compose.marvels.domain.models.ComicModel
-import com.compose.marvels.domain.models.GalleryModel
 import com.compose.marvels.domain.usecases.GetCharactersByNameStartsWithUseCase
 import com.compose.marvels.domain.usecases.GetCharactersUseCase
 import com.compose.marvels.domain.usecases.GetComicsByIdUseCase
@@ -15,7 +14,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -56,7 +54,17 @@ class MainViewModel @Inject constructor(
     private val _mode = MutableStateFlow(false)
     val mode: StateFlow<Boolean> = _mode
 
+    private val _expanded = MutableStateFlow(false)
+    val expanded: StateFlow<Boolean> = _expanded
+
+    private val _animate = MutableStateFlow(false)
+    val animate: StateFlow<Boolean> = _animate
+
     fun getPage() = _page++
+
+    fun onAnimateChange() {
+        _animate.value = !animate.value
+    }
 
     fun onModeChange() {
         _mode.value = !_mode.value
@@ -82,7 +90,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _isLoading.value = true
-                val list = getCharactersByNameStartsWith.invoke(ParamsDto(nameStartsWith = _filterText.value)) ?: emptyList()
+                val list = getCharactersByNameStartsWith.invoke(ParamsDto(nameStartsWith = _filterText.value))
                 setCharacters(list)
                 _isLoading.value = false
             } catch (e: Exception) {
@@ -173,6 +181,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun onItemClick(characterModel: CharacterModel) {
+        onAnimateChange()
         getAllDetails(characterModel.characterID!!)
         _filterText.value = ""
         _charactersList.value = _charactersTotal.sortedBy { it.name }
@@ -180,5 +189,9 @@ class MainViewModel @Inject constructor(
 
     fun isReachedEnd(lazyGridState: LazyGridState): Boolean =
         lazyGridState.firstVisibleItemIndex + lazyGridState.layoutInfo.visibleItemsInfo.size >= lazyGridState.layoutInfo.totalItemsCount
+
+    fun onExpanded() {
+        _expanded.value = !_expanded.value
+    }
 
 }

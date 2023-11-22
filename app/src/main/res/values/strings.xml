@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">Marvels</string>
+
+    <!-- Titles Screens -->
+    <string name="home_screen">Inicio</string>
+    <string name="gallery_screen">Personajes</string>
+    <string name="detail_screen">Detalle</string>
+
+    <!-- Buttons -->
+    <string name="characters_button">Personajes</string>
+    <string name="search_button">Buscador</string>
+
+    <!-- Errors -->
+    <string name="image_error">Error al cargar la imagen</string>
+    <string name="characters_error">No hay resultados</string>
+    <string name="comics_error">No hay comics</string>
 </resources>

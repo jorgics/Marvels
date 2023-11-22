@@ -28,28 +28,31 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.compose.marvels.R
 import com.compose.marvels.domain.models.CharacterModel
 import com.compose.marvels.ui.MainViewModel
 import com.compose.marvels.ui.models.Routes
-import com.compose.marvels.ui.theme.BlackGradiant
 import com.compose.marvels.ui.theme.BodyText
 import com.compose.marvels.ui.theme.RedGradiant
 import com.compose.marvels.ui.theme.TitleText
-import com.compose.marvels.ui.theme.WhiteGradiant
 import com.compose.marvels.ui.utils.Filter
 import com.compose.marvels.ui.utils.ImageDefault
 import com.compose.marvels.ui.utils.LoadImage
 import com.compose.marvels.ui.utils.LoadingProgress
+import com.compose.marvels.ui.utils.MessageError
+import com.compose.marvels.ui.utils.MyLogo
+import com.compose.marvels.ui.utils.MyTitle
 import com.compose.marvels.ui.utils.MyTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GalleryScreen(navController: NavHostController, mainViewModel: MainViewModel) {
-
     val mode by mainViewModel.mode.collectAsState()
+    val animate by mainViewModel.animate.collectAsState()
     val characters by mainViewModel.charactersList.collectAsState()
     val isLoading by mainViewModel.isLoading.collectAsState()
     val filterText by mainViewModel.filterText.collectAsState()
@@ -57,20 +60,23 @@ fun GalleryScreen(navController: NavHostController, mainViewModel: MainViewModel
 
     LaunchedEffect(Unit) {
         if (mainViewModel.getPage() == -1) mainViewModel.getCharacters()
+        if (animate) mainViewModel.onAnimateChange()
     }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             MyTopBar(
+                title = { MyTitle(title = stringResource(id = R.string.gallery_screen)) },
                 navigationIcon = {
                     Icon(
-                        modifier = Modifier.clickable { navController.navigate(Routes.Home.route) },
+                        modifier = Modifier.clickable { navController.popBackStack() },
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = "",
                         tint = Color.White
                     )
-                }
+                },
+                actions = { MyLogo() }
             )
         }
     ) { innerPadding ->
@@ -78,11 +84,11 @@ fun GalleryScreen(navController: NavHostController, mainViewModel: MainViewModel
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .background(if (mode) BlackGradiant else WhiteGradiant),
+                .background(if (mode) Color.Black else Color.White),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            if (isLoading) {
+            if (isLoading && !animate) {
                 LoadingProgress()
             } else {
                 Filter(
@@ -93,7 +99,10 @@ fun GalleryScreen(navController: NavHostController, mainViewModel: MainViewModel
                     onCleanClick = { mainViewModel.onCleanClick() }
                 )
                 if (characters.isEmpty()) {
-                    Text(text = "No hay resultados")
+                    MessageError(
+                        message = stringResource(id = R.string.characters_error),
+                        mode = mode
+                    )
                 } else {
                     LazyVerticalGrid(
                         modifier = Modifier

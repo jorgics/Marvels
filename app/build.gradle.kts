@@ -61,9 +61,6 @@ dependencies {
     //Coil
     implementation("io.coil-kt:coil-compose:$coilVersion")
 
-    //Orbital
-    implementation("com.github.skydoves:orbital:0.3.2")
-
     //Retrofit
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
