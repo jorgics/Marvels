@@ -62,7 +62,7 @@ fun HomeScreen(navController: NavHostController, mainViewModel: MainViewModel) {
         modifier = Modifier.fillMaxSize(),
         topBar = {
             MyTopBar(
-                title = { MyLogo(modifier = Modifier.fillMaxWidth()) },
+                title = { MyLogo(modifier = Modifier.fillMaxWidth(), navController) },
                 navigationIcon = { MyTitle(title = stringResource(id = R.string.home_screen)) },
                 actions = {
                     Switch(

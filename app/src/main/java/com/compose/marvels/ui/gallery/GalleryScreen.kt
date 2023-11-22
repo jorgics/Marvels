@@ -76,7 +76,7 @@ fun GalleryScreen(navController: NavHostController, mainViewModel: MainViewModel
                         tint = Color.White
                     )
                 },
-                actions = { MyLogo() }
+                actions = { MyLogo(navController = navController) }
             )
         }
     ) { innerPadding ->

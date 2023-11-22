@@ -29,10 +29,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.compose.marvels.R
+import com.compose.marvels.ui.models.Routes
 import com.compose.marvels.ui.theme.BodyText
 import com.compose.marvels.ui.theme.Red500
 import com.compose.marvels.ui.theme.Red700
@@ -69,7 +71,10 @@ fun MyTitle(
 }
 
 @Composable
-fun MyLogo(modifier: Modifier = Modifier) {
+fun MyLogo(
+    modifier: Modifier = Modifier,
+    navController: NavController
+) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
@@ -77,7 +82,8 @@ fun MyLogo(modifier: Modifier = Modifier) {
         Image(
             modifier = Modifier
                 .size(85.dp)
-                .align(Alignment.Center),
+                .align(Alignment.Center)
+                .clickable { navController.popBackStack(Routes.Home.route, false) },
             painter = painterResource(id = R.drawable.logo_transparent),
             contentDescription = ""
         )
