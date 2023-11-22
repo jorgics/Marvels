@@ -20,6 +20,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val baseUrl = "BASE_URL"
+        buildConfigField("String", baseUrl, "\"https://gateway.marvel.com/\"")
     }
 
     buildTypes {
@@ -39,6 +42,7 @@ android {
         jvmTarget = "17"
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
     composeOptions {
@@ -49,6 +53,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
 }
 
 dependencies {
@@ -57,6 +62,9 @@ dependencies {
     val navigationVersion = "2.7.5"
     val retrofitVersion = "2.9.0"
     val coilVersion = "2.5.0"
+
+    //security
+    implementation("androidx.security:security-crypto-ktx:1.1.0-alpha06")
 
     //Coil
     implementation("io.coil-kt:coil-compose:$coilVersion")

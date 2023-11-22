@@ -64,3 +64,11 @@ val BodyTextSmall = TextStyle(
     lineHeight = 16.sp,
     letterSpacing = 0.5.sp
 )
+
+val AttributionText = TextStyle(
+    fontFamily = FontFamily.Default,
+    fontWeight = FontWeight.Normal,
+    fontSize = 9.sp,
+    lineHeight = 14.sp,
+    letterSpacing = 0.5.sp
+)

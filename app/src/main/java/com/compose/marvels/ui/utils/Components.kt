@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.outlined.Cancel
@@ -27,14 +29,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.compose.marvels.R
-import com.compose.marvels.ui.models.Routes
+import com.compose.marvels.ui.theme.AttributionText
 import com.compose.marvels.ui.theme.BodyText
 import com.compose.marvels.ui.theme.Red500
 import com.compose.marvels.ui.theme.Red700
@@ -73,7 +75,7 @@ fun MyTitle(
 @Composable
 fun MyLogo(
     modifier: Modifier = Modifier,
-    navController: NavController
+    onClick: () -> Unit = {}
 ) {
     Box(
         modifier = modifier,
@@ -83,7 +85,7 @@ fun MyLogo(
             modifier = Modifier
                 .size(85.dp)
                 .align(Alignment.Center)
-                .clickable { navController.popBackStack(Routes.Home.route, false) },
+                .clickable { onClick() },
             painter = painterResource(id = R.drawable.logo_transparent),
             contentDescription = ""
         )
@@ -204,3 +206,54 @@ fun Filter(
         )
     )
 }
+
+@Composable
+fun Attribution(mode: Boolean) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        Text(
+            modifier = Modifier.padding(bottom = 10.dp),
+            text = stringResource(id = R.string.attribution_marvel),
+            style = AttributionText,
+            textAlign = TextAlign.Center,
+            color = if (mode) Color.White else Color.Black
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MyOutlinedTextField(
+    modifier: Modifier = Modifier,
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    mode: Boolean,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
+) {
+    OutlinedTextField(
+        modifier = modifier,
+        value = value,
+        onValueChange = { onValueChange(it) },
+        label = { Text(text = label) },
+        trailingIcon = trailingIcon,
+        visualTransformation = visualTransformation,
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            textColor = if (mode) Color.White else Color.Black,
+            focusedLabelColor = Red700,
+            focusedBorderColor = Red700,
+            unfocusedBorderColor = Red500,
+            unfocusedLabelColor = Red500,
+            focusedTrailingIconColor = Red700,
+            unfocusedTrailingIconColor = Red500
+        ),
+        keyboardActions = keyboardActions,
+        keyboardOptions = keyboardOptions
+    )
+}
+

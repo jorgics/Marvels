@@ -1,5 +1,6 @@
 package com.compose.marvels.core.di
 
+import com.compose.marvels.BuildConfig
 import com.compose.marvels.core.interceptors.AuthInterceptor
 import com.compose.marvels.data.network.MarvelsRepository
 import com.compose.marvels.data.network.MarvelsService
@@ -22,7 +23,7 @@ object NetworkModule {
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit
             .Builder()
-            .baseUrl("https://gateway.marvel.com/")
+            .baseUrl(BuildConfig.BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

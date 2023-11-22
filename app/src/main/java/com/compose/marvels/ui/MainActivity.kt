@@ -39,6 +39,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    mainViewModel.createPreference(context = applicationContext)
                     val navController = rememberNavController()
                     val isError by mainViewModel.isError.collectAsState()
 

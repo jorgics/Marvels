@@ -35,6 +35,7 @@ import com.compose.marvels.R
 import com.compose.marvels.domain.models.CharacterModel
 import com.compose.marvels.domain.models.ComicModel
 import com.compose.marvels.ui.MainViewModel
+import com.compose.marvels.ui.models.Routes
 import com.compose.marvels.ui.theme.BodyText
 import com.compose.marvels.ui.theme.BodyTextSmall
 import com.compose.marvels.ui.theme.Red700
@@ -76,7 +77,12 @@ fun DetailScreen(navController: NavHostController, mainViewModel: MainViewModel)
                         tint = Color.White
                     )
                 },
-                actions = { MyLogo(navController = navController) }
+                actions = {
+                    MyLogo {
+                        mainViewModel.reset()
+                        navController.popBackStack(Routes.Home.route, false)
+                    }
+                }
             )
         }
     ) { innerPadding ->
