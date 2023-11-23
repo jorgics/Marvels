@@ -4,11 +4,14 @@ import android.content.Context
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.compose.marvels.core.utils.CodesManager
 import com.compose.marvels.core.utils.KeysManger
+import com.compose.marvels.core.utils.MessagesErrorManager
 import com.compose.marvels.core.utils.SharedPreferenceManager
 import com.compose.marvels.data.network.dtos.ParamsDto
 import com.compose.marvels.domain.models.CharacterModel
 import com.compose.marvels.domain.models.ComicModel
+import com.compose.marvels.domain.models.Result
 import com.compose.marvels.domain.usecases.GetCharactersByNameStartsWithUseCase
 import com.compose.marvels.domain.usecases.GetCharactersUseCase
 import com.compose.marvels.domain.usecases.GetComicsByIdUseCase
@@ -47,6 +50,9 @@ class MainViewModel @Inject constructor(
 
     private val _isError = MutableStateFlow(false)
     val isError: StateFlow<Boolean> = _isError
+
+    private val _errorMessage = MutableStateFlow("")
+    val errorMessage: StateFlow<String> = _errorMessage
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -136,11 +142,11 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _isLoading.value = true
-                val list = getCharactersByNameStartsWith.invoke(ParamsDto(nameStartsWith = _filterText.value))
-                setCharacters(list)
+                val galleryModel = getCharactersByNameStartsWith.invoke(ParamsDto(nameStartsWith = _filterText.value))
+                setCharacters(galleryModel.characters)
                 _isLoading.value = false
             } catch (e: Exception) {
-                error()
+                errorException()
             }
         }
     }
@@ -158,10 +164,11 @@ class MainViewModel @Inject constructor(
                 _isLoading.value = true
                 val galleryModel = getCharactersUseCase.invoke(ParamsDto())
                 _total = galleryModel.total ?: 0
+                getErrorMessage(galleryModel.error)
                 setCharacters(galleryModel.characters)
                 _isLoading.value = false
             } catch (e: Exception) {
-                error()
+                errorException()
             }
 
         }
@@ -171,9 +178,10 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val galleryModel = getCharactersUseCase.invoke(ParamsDto(offset = nextPage(page)))
+                getErrorMessage(galleryModel.error)
                 setCharacters(galleryModel.characters)
             } catch (e: Exception) {
-                error()
+                errorException()
             }
 
         }
@@ -189,32 +197,36 @@ class MainViewModel @Inject constructor(
 
     private fun setCharactersTotal(list: List<CharacterModel>) {
         _charactersTotal = (_charactersTotal + list).distinct().sortedBy { it.name }
-    }
-
-    private fun getDetailById(characterId: Int) {
-        viewModelScope.launch {
-            try {
-                _isLoading.value = true
-                _character.value = getDetailCharacterById.invoke(characterId)
-            } catch (e: Exception) {
-                error()
-            }
-
-        }
+        if (_charactersTotal.isEmpty()) _page = -1
     }
 
     private fun getComicsById(characterId: Int) {
         viewModelScope.launch {
             try {
-                _comics.value = getComicsByIdUseCase.invoke(characterId) ?: emptyList()
+                val detailModel = getComicsByIdUseCase.invoke(characterId)
+                _comics.value = detailModel.comics ?: emptyList()
+                getErrorMessage(detailModel.error)
                 _isLoading.value = false
             } catch (e: Exception) {
-                error()
+                errorException()
             }
         }
     }
 
-    private fun error() {
+    private fun getDetailCharacterById(characterId: Int) {
+        viewModelScope.launch {
+            try {
+                val detailModel = getDetailCharacterById.invoke(characterId)
+                _character.value = detailModel.characterModel
+                getErrorMessage(detailModel.error)
+                _isLoading.value = false
+            } catch (e: Exception) {
+                errorException()
+            }
+        }
+    }
+
+    private fun errorException() {
         viewModelScope.launch {
             _isLoading.value = false
             _isError.value = true
@@ -223,14 +235,34 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun getAllDetails(characterId: Int) {
-        getDetailById(characterId)
-        getComicsById(characterId)
+    private fun getErrorMessage(error: Result?) {
+        if (error != null) {
+            when(error.code) {
+                CodesManager.CODE_409 -> {
+                    _errorMessage.value = MessagesErrorManager.MISSING_API_KEY_HASH_TIMESTAMP
+                    errorException()
+                }
+                CodesManager.CODE_405 -> {
+                    _errorMessage.value = MessagesErrorManager.METHOD_NOT_ALLOWED
+                    errorException()
+                }
+                CodesManager.CODE_403 -> {
+                    _errorMessage.value = MessagesErrorManager.FORBIDDEN
+                    errorException()
+                }
+                CodesManager.CODE_401 -> {
+                    _errorMessage.value = MessagesErrorManager.INVALID
+                    errorException()
+                }
+                else -> { _errorMessage.value = "" }
+            }
+        }
     }
 
     fun onItemClick(characterModel: CharacterModel) {
         onAnimateChange()
-        getAllDetails(characterModel.characterID!!)
+        getDetailCharacterById(characterModel.characterID!!)
+        getComicsById(characterModel.characterID)
         _filterText.value = ""
         _charactersList.value = _charactersTotal.sortedBy { it.name }
     }
@@ -245,6 +277,9 @@ class MainViewModel @Inject constructor(
     fun createPreference(context: Context) {
         SharedPreferenceManager.create(context)
         _isApiKey.value = isApikeyAndPrivateKeyInPreference()
+        _apiKey.value = SharedPreferenceManager.getString(KeysManger.API_KEY) ?: ""
+        _privateKey.value = SharedPreferenceManager.getString(KeysManger.PRIVATE_KEY) ?: ""
+        isEnabled()
     }
 
     private fun isApikey(): Boolean = SharedPreferenceManager.getString(KeysManger.API_KEY).isNullOrEmpty()

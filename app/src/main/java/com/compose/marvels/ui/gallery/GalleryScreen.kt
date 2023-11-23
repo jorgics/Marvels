@@ -39,6 +39,7 @@ import com.compose.marvels.ui.models.Routes
 import com.compose.marvels.ui.theme.BodyText
 import com.compose.marvels.ui.theme.RedGradiant
 import com.compose.marvels.ui.theme.TitleText
+import com.compose.marvels.ui.utils.Attribution
 import com.compose.marvels.ui.utils.Filter
 import com.compose.marvels.ui.utils.ImageDefault
 import com.compose.marvels.ui.utils.LoadImage
@@ -131,6 +132,7 @@ fun GalleryScreen(navController: NavHostController, mainViewModel: MainViewModel
                     }
                 }
             }
+
         }
     }
 }

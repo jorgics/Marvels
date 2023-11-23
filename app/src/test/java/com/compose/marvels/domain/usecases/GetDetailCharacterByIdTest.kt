@@ -4,6 +4,7 @@ import com.compose.marvels.data.network.MarvelsRepository
 import com.compose.marvels.data.network.responses.ComicList
 import com.compose.marvels.data.network.responses.Image
 import com.compose.marvels.domain.models.CharacterModel
+import com.compose.marvels.domain.models.DetailModel
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -27,13 +28,14 @@ class GetDetailCharacterByIdTest{
     @Test
     fun `when the marvels service have characterId negative return null`() = runBlocking {
         val characterId = -1
+        val detailModel = DetailModel()
         //Given
-        coEvery { repository.getDetailCharacterById(characterId) } returns null
+        coEvery { repository.getDetailCharacterById(characterId) } returns DetailModel()
         //When
         val response = getDetailCharacterById(characterId)
         //Then
         coVerify(exactly = 1) { repository.getDetailCharacterById(characterId) }
-        assert(response == null)
+        assert(response == DetailModel())
     }
 
     @Test
@@ -47,16 +49,17 @@ class GetDetailCharacterByIdTest{
             comics = ComicList(null, null, null , emptyList())
 
         )
+        val detailModel = DetailModel(characterModel = characterModel)
         //Given
-        coEvery { repository.getDetailCharacterById(characterId) } returns characterModel
+        coEvery { repository.getDetailCharacterById(characterId) } returns detailModel
         //When
         val response = getDetailCharacterById(characterId)
         //Then
         coVerify(exactly = 1) { repository.getDetailCharacterById(characterId) }
-        assert(response?.characterID == characterModel.characterID)
-        assert(response?.name == characterModel.name)
-        assert(response?.comics != null)
-        assert(response?.image == characterModel.image)
-        assert(response?.description == characterModel.description)
+        assert(response.characterModel?.characterID == detailModel.characterModel?.characterID)
+        assert(response.characterModel?.name == detailModel.characterModel?.name)
+        assert(response.characterModel?.comics != null)
+        assert(response.characterModel?.image == detailModel.characterModel?.image)
+        assert(response.characterModel?.description == detailModel.characterModel?.description)
     }
 }

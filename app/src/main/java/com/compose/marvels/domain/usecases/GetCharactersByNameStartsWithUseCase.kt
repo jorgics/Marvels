@@ -7,5 +7,5 @@ import com.compose.marvels.domain.models.GalleryModel
 import javax.inject.Inject
 
 class GetCharactersByNameStartsWithUseCase @Inject constructor(private val repository: Repository) {
-    suspend operator fun invoke(paramsDto: ParamsDto) = repository.getCharactersByNameStartsWith(paramsDto) ?: emptyList()
+    suspend operator fun invoke(paramsDto: ParamsDto) = repository.getCharactersByNameStartsWith(paramsDto)
 }

@@ -42,8 +42,9 @@ class MainActivity : ComponentActivity() {
                     mainViewModel.createPreference(context = applicationContext)
                     val navController = rememberNavController()
                     val isError by mainViewModel.isError.collectAsState()
+                    val errorMessage by mainViewModel.errorMessage.collectAsState()
 
-                    if (isError) Toast.makeText(applicationContext, "Error", Toast.LENGTH_LONG)
+                    if (isError) Toast.makeText(applicationContext, errorMessage, Toast.LENGTH_LONG)
                         .show()
 
                     NavHost(navController = navController, startDestination = Routes.Splash.route) {

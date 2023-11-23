@@ -3,6 +3,7 @@ package com.compose.marvels.domain.usecases
 import com.compose.marvels.data.network.MarvelsRepository
 import com.compose.marvels.data.network.dtos.ParamsDto
 import com.compose.marvels.domain.models.CharacterModel
+import com.compose.marvels.domain.models.GalleryModel
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -27,37 +28,37 @@ class GetCharactersByNameStartsWithUseCaseTest {
     fun `when the characters are filter by name start with and doesnt return anything`() = runBlocking {
         val paramsDto = ParamsDto(nameStartsWith = "asdasfa")
         //Given
-        coEvery { repository.getCharactersByNameStartsWith(paramsDto) } returns emptyList()
+        coEvery { repository.getCharactersByNameStartsWith(paramsDto) } returns GalleryModel()
         //When
         val response = getCharactersByNameStartsWithUseCase(paramsDto)
         //Then
         coVerify(exactly = 1) { repository.getCharactersByNameStartsWith(paramsDto) }
-        assert(emptyList<CharacterModel>() == response)
+        assert(GalleryModel() == response)
     }
 
     @Test
     fun `when the characters are filter by name start with and return characters filtered`() = runBlocking {
         val paramsDto = ParamsDto(nameStartsWith = "Spider")
-        val list = listOf(CharacterModel(), CharacterModel())
+        val galleryModel = GalleryModel(characters = listOf(CharacterModel(), CharacterModel()))
         //Given
-        coEvery { repository.getCharactersByNameStartsWith(paramsDto) } returns list
+        coEvery { repository.getCharactersByNameStartsWith(paramsDto) } returns galleryModel
         //When
         val response = getCharactersByNameStartsWithUseCase(paramsDto)
         //Then
         coVerify(exactly = 1) { repository.getCharactersByNameStartsWith(paramsDto) }
-        assert(list == response)
+        assert(galleryModel.characters == response.characters)
     }
 
     @Test
     fun `when the characters are filter by name exactly and return character`() = runBlocking {
         val paramsDto = ParamsDto(nameStartsWith = "Spider-Man (Peter Parker)")
-        val list = listOf(CharacterModel())
+        val galleryModel = GalleryModel(characters = listOf(CharacterModel()))
         //Given
-        coEvery { repository.getCharactersByNameStartsWith(paramsDto) } returns list
+        coEvery { repository.getCharactersByNameStartsWith(paramsDto) } returns galleryModel
         //When
         val response = getCharactersByNameStartsWithUseCase(paramsDto)
         //Then
         coVerify(exactly = 1) { repository.getCharactersByNameStartsWith(paramsDto) }
-        assert(list == response)
+        assert(galleryModel.characters == response.characters)
     }
 }

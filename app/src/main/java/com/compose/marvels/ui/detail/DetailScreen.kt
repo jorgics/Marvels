@@ -42,6 +42,7 @@ import com.compose.marvels.ui.theme.Red700
 import com.compose.marvels.ui.theme.RedGradiant
 import com.compose.marvels.ui.theme.TitleText
 import com.compose.marvels.ui.theme.TitleTextSmall
+import com.compose.marvels.ui.utils.Attribution
 import com.compose.marvels.ui.utils.ImageDefault
 import com.compose.marvels.ui.utils.LoadImage
 import com.compose.marvels.ui.utils.LoadingProgress

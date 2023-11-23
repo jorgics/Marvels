@@ -195,9 +195,13 @@ fun HomeScreen(navController: NavHostController, mainViewModel: MainViewModel) {
                             mode = mode,
                             visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                             trailingIcon = {
-                                val icon = if (passwordVisibility) Icons.Rounded.Visibility else Icons.Rounded.VisibilityOff
+                                val icon =
+                                    if (passwordVisibility) Icons.Rounded.Visibility else Icons.Rounded.VisibilityOff
                                 IconButton(onClick = { mainViewModel.onVisibilityChange() }) {
-                                    Icon(imageVector = icon, contentDescription = "Toggle password visibility")
+                                    Icon(
+                                        imageVector = icon,
+                                        contentDescription = "Toggle password visibility"
+                                    )
                                 }
                             },
                             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
