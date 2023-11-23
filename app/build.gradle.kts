@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -22,6 +20,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val baseUrl = "BASE_URL"
+        buildConfigField("String", baseUrl, "\"https://gateway.marvel.com/\"")
     }
 
     buildTypes {
@@ -41,6 +42,7 @@ android {
         jvmTarget = "17"
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
     composeOptions {
@@ -51,14 +53,29 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
 }
 
 dependencies {
     val composeUiVersion = "1.5.0"
     val daggerHiltVersion = "2.44"
+    val navigationVersion = "2.7.5"
+    val retrofitVersion = "2.9.0"
+    val coilVersion = "2.5.0"
 
-    //Orbital
-    implementation("com.github.skydoves:orbital:0.3.2")
+    //security
+    implementation("androidx.security:security-crypto-ktx:1.1.0-alpha06")
+
+    //Coil
+    implementation("io.coil-kt:coil-compose:$coilVersion")
+
+    //Retrofit
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.3.1")
+
+    //Navigation
+    implementation("androidx.navigation:navigation-compose:$navigationVersion")
 
     //Dagger Hilt
     implementation ("com.google.dagger:hilt-android:$daggerHiltVersion")
@@ -66,6 +83,9 @@ dependencies {
 
     //Icons
     implementation("androidx.compose.material:material-icons-extended")
+
+    //Mock
+    testImplementation("io.mockk:mockk:1.12.2")
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")

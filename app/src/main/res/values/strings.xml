@@ -1,3 +1,28 @@
 <resources>
     <string name="app_name">Marvels</string>
+
+    <!-- Attribution -->
+    <string name="url">https://developer.marvel.com/</string>
+    <string name="attribution_marvel">Data provided by Marvel. © 2014 Marvel</string>
+
+    <!-- Titles Screens -->
+    <string name="home_screen">Inicio</string>
+    <string name="gallery_screen">Personajes</string>
+    <string name="detail_screen">Detalle</string>
+
+    <!-- TextFields -->
+    <string name="dont_api_key">Introduzca las claves:</string>
+    <string name="api_key">Introduzca apiKey</string>
+    <string name="private_key">Introduzca privateKey</string>
+
+    <!-- Buttons -->
+    <string name="keys_button">Claves</string>
+    <string name="characters_button">Personajes</string>
+    <string name="search_button">Buscador</string>
+    <string name="save_button">Guardar</string>
+
+    <!-- Errors -->
+    <string name="image_error">Error al cargar la imagen</string>
+    <string name="characters_error">No hay resultados</string>
+    <string name="comics_error">No hay comics</string>
 </resources>
