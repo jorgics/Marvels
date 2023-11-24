@@ -16,9 +16,7 @@ This application is used to search for marvel characters and see a brief descrip
 - Animations
 - UnitTest
 
----
-
-## Views
+## ScreenShots
 
 |                             Splash                             |                             Home                             |
 |:--------------------------------------------------------------:|:------------------------------------------------------------:|
@@ -32,8 +30,11 @@ This application is used to search for marvel characters and see a brief descrip
 |:---------------------------------------------------------------:|:--------------------------------------------------------------:|
 | <img src="images/Gallery.png" style="height: 50%; width:50%;"/> | <img src="images/Detail.png" style="height: 50%; width:50%;"/> |
 
+---
 
-## Installation
+## Development Environment
+
+This repository is ready to import Android Studio, configured with Java 17 and Gradle. In order to request the Marvel API you should follow the following steps
 
 Steps to follow to make the app work once installed:
 
@@ -41,6 +42,89 @@ Steps to follow to make the app work once installed:
 - 2- secondly we have to create an account if we don't already have one to access and obtain the keys.
 - 3- Once we are registered we go to the section to get apiKey
 - 4- Finally, we add the keys to the application, both the apikey and the privateKey, and we can use our application normally.
+
+---
+
+## Architecture
+
+A clean architecture with SOLID principles has been followed in this repository. And the project contains 3 main layers data, domain, ui. These layers are connected to each other by means of dependency injection. In addition, a single activity and viewmodel has been considered as the project is not very large.
+
+<img src="images/Architecture.png" style="height: 35%; width:35%;"/>
+
+---
+
+## Layers
+
+As mentioned above, the project is divided into 3 main layers: data, domain and ui.
+
+### Data layer
+The project has only one remote database that uses the 'core/di/NetworkModule' to inject the Retrofit. It is represented by a Retrofit `interface` requested by the data source suspended functions implementations where the raw Retrofit `Response` is processed to return it corresponding model or error wrapped 
+
+The repository implementation orchestrates the data sources and maps the response model to a domain model with the key properties.
+
+This layer is requested by the repository `interface` defined in the `domain` layer.
+
+**This layer do not have any android dependencies**. 
+
+### Domain layer
+
+The domain layer does not depend on any layer. It contains the repository definition that expect to returns domain models, also has the app business actions, like get the characters or search for one, these are simple commands because of that they are kotlin functional interfaces. 
+
+This layer is requested by the use case `interface`.
+
+**This layer do not have any android dependencies**. 
+
+### UI layer
+
+In this layer we have the `activity` to paint the corresponding views according to the flow of the application with the help of the `viewmodel` for the logic. Navigation between views is implemented with `Navigation component` and each view is implemented in `Compose`. Each view has its own file and there is also a `component file` that helps the other views with some general components.
+
+From this layer, all requests are executed through corrutines in the viewmodel. These use cases are added to the viewmodel through dependency injection and depending on the expected behaviour of the views the viewmodel will execute them at the required time.
+
+The application enables dark mode with a switch on the top right bar.
+
+---
+
+## Linting and Testing
+
+### Testing
+
+To achieve this, the unit tests were leveraged on Junit5 and Mockk, in a mix of mocks and fakes. The component under test is a spy that is executed with its real behavior and its dependencies are mocks that return fakes. All the tests have assertions besides exhaustive verifications and confirmations.
+
+---
+
+## Next Steps
+
+### Development Environment
+
+- Create product flavors.
+- Improve Gihub Actions CI (releases and tags creation).
+- Add Benchmarks.
+
+### Features
+
+- Implement favorites view.
+- Improve search view with filters.
+- Add `SnackBar`s for show connections/server issues and retry.
+
+### Architecture
+
+- Creation of local data sources (Favorites feature).
+- Review the design of complex use cases.
+
+### Test and linting
+
+- Add Detekt and Ktlint for ensure style and good practices
+- Add app instumented test.
+- Add navigation test.
+- Add mock web server.
+
+### Technical Debt
+
+- Add full suit of API error tests.
+- Instrumented test runs with real requests.
+- Improve resources definitions (themes, string, styles, etc.).
+
+---
 
 ## Attributions
 
