@@ -59,11 +59,8 @@ import com.compose.marvels.ui.utils.MyTopBar
 @Composable
 fun HomeScreen(navController: NavHostController, mainViewModel: MainViewModel) {
     val mode by mainViewModel.mode.collectAsState()
-    val isApikey by mainViewModel.isApiKey.collectAsState()
     val apikey by mainViewModel.apiKey.collectAsState()
-    val privateKey by mainViewModel.privateKey.collectAsState()
     val passwordVisibility by mainViewModel.passwordVisibility.collectAsState()
-    val enabled by mainViewModel.enabled.collectAsState()
     val colorMode = remember { Animatable(Color.White) }
 
     LaunchedEffect(mode) {
@@ -120,7 +117,7 @@ fun HomeScreen(navController: NavHostController, mainViewModel: MainViewModel) {
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
-                if (isApikey) {
+                if (apikey.isApiKey) {
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -174,7 +171,7 @@ fun HomeScreen(navController: NavHostController, mainViewModel: MainViewModel) {
                                     end = 24.dp,
                                     top = 8.dp
                                 ),
-                            value = apikey,
+                            value = apikey.apiKey,
                             onValueChange = { mainViewModel.onApikeyChange(it) },
                             label = stringResource(id = R.string.api_key),
                             mode = mode,
@@ -189,7 +186,7 @@ fun HomeScreen(navController: NavHostController, mainViewModel: MainViewModel) {
                                     end = 24.dp,
                                     top = 8.dp
                                 ),
-                            value = privateKey,
+                            value = apikey.privateKey,
                             onValueChange = { mainViewModel.onPrivateKeyChange(it) },
                             label = stringResource(id = R.string.private_key),
                             mode = mode,
@@ -210,7 +207,7 @@ fun HomeScreen(navController: NavHostController, mainViewModel: MainViewModel) {
                         Button(
                             modifier = Modifier.padding(top = 8.dp),
                             onClick = { mainViewModel.onSaveClick() },
-                            enabled = enabled,
+                            enabled = apikey.enabled,
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Red700
                             )

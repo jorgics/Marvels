@@ -2,7 +2,6 @@ package com.compose.marvels.ui
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -18,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.compose.marvels.core.base.activity.BaseComponentActivity
 import com.compose.marvels.ui.detail.DetailScreen
 import com.compose.marvels.ui.gallery.GalleryScreen
 import com.compose.marvels.ui.home.HomeScreen
@@ -27,7 +27,7 @@ import com.compose.marvels.ui.theme.MarvelsTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : BaseComponentActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {

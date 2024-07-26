@@ -197,12 +197,12 @@ fun Filter(
         colors = TextFieldDefaults.outlinedTextFieldColors(
             unfocusedBorderColor = Red500,
             focusedBorderColor = Red700,
-            textColor = color,
+            focusedTextColor = color,
             unfocusedTrailingIconColor = Red500,
             focusedTrailingIconColor = Red700,
             unfocusedLeadingIconColor = Red500,
             focusedLeadingIconColor = Red700,
-            placeholderColor = color
+            focusedPlaceholderColor = color
         )
     )
 }
@@ -244,7 +244,7 @@ fun MyOutlinedTextField(
         trailingIcon = trailingIcon,
         visualTransformation = visualTransformation,
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            textColor = if (mode) Color.White else Color.Black,
+            focusedTextColor = if (mode) Color.White else Color.Black,
             focusedLabelColor = Red700,
             focusedBorderColor = Red700,
             unfocusedBorderColor = Red500,
