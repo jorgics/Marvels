@@ -24,8 +24,7 @@ fun SplashScreen(navController: NavHostController, mainViewModel: MainViewModel)
     val mode by mainViewModel.mode.collectAsState()
 
     LaunchedEffect(Unit) {
-        delay(2000)
-        delay(1000)
+        delay(3000)
         navController.navigate(Routes.Home.route)
     }
 
